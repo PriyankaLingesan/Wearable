@@ -1,0 +1,33 @@
+       items  images
+split               
+test      48     288
+train    144     864
+val       48     288
+readability
+readable      786
+partial       368
+unreadable    286
+Name: count, dtype: int64
+readability   partial  readable  unreadable
+condition                                  
+angle              23        66           1
+blur               19        67           5
+clean               0       240           0
+combined           77        69          53
+glare              43        41          22
+lowcontrast        40        64           0
+lowres              8        91           2
+noise              57        42           0
+occlusion          24         0          70
+severe             77         8         133
+uneven_light        0        98           0
+item-level split check passed; clean-render contrast stats:
+       contrast_ink  blur_ratio    h_eff
+count         240.0     240.000  240.000
+mean            1.0       0.049   70.171
+std             0.0       0.010   13.875
+min             1.0       0.030   39.000
+25%             1.0       0.042   59.000
+50%             1.0       0.049   70.000
+75%             1.0       0.055   78.000
+max             1.0       0.079  115.000

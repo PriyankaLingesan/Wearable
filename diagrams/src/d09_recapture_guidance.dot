@@ -1,0 +1,8 @@
+digraph G {
+graph [fontname="Helvetica",rankdir=LR,pad=0.3,nodesep=0.35,ranksep=0.5]; node [fontname="Helvetica",shape=box,style="rounded,filled",fillcolor="#EEF3FA",color="#2F5D8C",fontsize=11]; edge [fontname="Helvetica",fontsize=9,color="#555555"];
+
+rankdir=TB;
+r [label="Rejected capture"]; z [label="Standardise 7 quality features (z-scores)\nagainst readable-reference mean/std (dev split)"]; d [label="Largest deficit z >= 1.0?",shape=diamond,fillcolor="#FFF4D6"];
+b [label="blur: hold steady, refocus"]; gl [label="glare: tilt wrist, lower LED"]; dk [label="dark: raise LED"]; un [label="uneven: re-centre under LED"]; sm [label="small: move closer"]; re [label="no clear factor:\nre-align and retake"];
+r->z->d; d->b; d->gl; d->dk; d->un; d->sm; d->re [label="none"];
+}

@@ -1,0 +1,11 @@
+digraph G {
+graph [fontname="Helvetica",rankdir=LR,pad=0.3,nodesep=0.35,ranksep=0.5]; node [fontname="Helvetica",shape=box,style="rounded,filled",fillcolor="#EEF3FA",color="#2F5D8C",fontsize=11]; edge [fontname="Helvetica",fontsize=9,color="#555555"];
+
+user [label="Wearer\n(inspects a hallmark)",shape=ellipse,fillcolor="#FFF4D6",color="#B8860B"];
+sub [label="Hallmark inscription\non jewellery item\n(not assessed for purity/authenticity)",fillcolor="#F3F3F3",color="#888888"];
+dev [label="Wrist-worn unit\n(camera, LED, OLED: simulated in the demo)"];
+pipe [label="Quality-aware recognition pipeline\n(implemented, runs in software)"];
+out [label="Outcome:\nACCEPT transcription  |  RETAKE + hint  |  NO MARK",fillcolor="#E4F4E4",color="#2E7D32"];
+user -> dev [label="press button / aim"]; sub -> dev [label="image of inscription"]; dev -> pipe [label="frame"]; pipe -> out; out -> dev [label="OLED"]; dev -> user;
+note [shape=note,fillcolor="#FDECEA",color="#C62828",label="Scope limit: reads engraved characters only.\nNo claim about gold authenticity, purity or composition."];
+}

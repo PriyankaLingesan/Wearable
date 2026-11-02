@@ -1,0 +1,9 @@
+Localiser tuning on DEVELOPMENT images only (n=260); metric: IoU vs ground-truth box
+gap=0.00 kx=0.05 all: mean 0.567 >=.5 0.631 | readable: mean 0.703 >=.5 0.904
+gap=0.00 kx=0.08 all: mean 0.559 >=.5 0.665 | readable: mean 0.674 >=.5 0.926
+gap=0.15 kx=0.05 all: mean 0.605 >=.5 0.731 | readable: mean 0.725 >=.5 0.971
+gap=0.15 kx=0.08 all: mean 0.546 >=.5 0.615 | readable: mean 0.643 >=.5 0.816
+gap=0.25 kx=0.05 all: mean 0.598 >=.5 0.712 | readable: mean 0.719 >=.5 0.941
+gap=0.25 kx=0.08 all: mean 0.538 >=.5 0.608 | readable: mean 0.638 >=.5 0.809
+gap=0.35 kx=0.05 all: mean 0.602 >=.5 0.715 | readable: mean 0.719 >=.5 0.941
+gap=0.35 kx=0.08 all: mean 0.541 >=.5 0.612 | readable: mean 0.638 >=.5 0.809

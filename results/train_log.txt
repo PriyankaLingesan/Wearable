@@ -1,0 +1,22 @@
+OCR selection (dev):
+    engine variant   CER   WER  exact  exact_strict    n
+ rapidocr     raw 0.276 0.849  0.542         0.106 1152
+ rapidocr     red 0.290 0.855  0.515         0.104 1152
+ rapidocr     enh 0.345 0.847  0.441         0.101 1152
+ rapidocr     bin 0.474 0.700  0.252         0.199 1152
+tesseract     red 0.570 0.673  0.250         0.241 1152
+tesseract     raw 0.604 0.708  0.217         0.209 1152
+tesseract     enh 0.708 0.808  0.165         0.148 1152
+tesseract     bin 0.774 0.902  0.102         0.071 1152
+primary ('rapidocr', 'raw') secondary ('tesseract', 'red')
+dev 1152 test 288 | dev OCR exact 0.542 test exact 0.51
+quality_only selected RandomForest test acc/F1 0.83 0.804
+quality+ocr_unc selected GradientBoosting test acc/F1 0.844 0.826
+S0 accept-all                          AURC 0.4535  risk@70% 0.416  @5%: cov 0.00 err nan
+S1 OCR conf (raw)                      AURC 0.2742  risk@70% 0.287  @5%: cov 0.09 err 0.154
+S2 rule gate + OCR conf                AURC 0.3647  risk@70% 0.446  @5%: cov 0.05 err 0.133
+S3 OCR-uncertainty only (learned)      AURC 0.1810  risk@70% 0.277  @5%: cov 0.34 err 0.051
+S4 quality only (learned)              AURC 0.2387  risk@70% 0.317  @5%: cov 0.11 err 0.094
+S5 quality + OCR-uncertainty           AURC 0.1821  risk@70% 0.277  @5%: cov 0.30 err 0.057
+S6 + grammar validity (ablation)       AURC 0.1782  risk@70% 0.272  @5%: cov 0.38 err 0.100
+guidance {'n_rejected_with_flagged_factor': 135, 'top1_hit_rate': 0.674074074074074, 'random_cause_hit_rate': 0.18518518518518517, 'n_rejected_total': 201, 'n_rejected_no_flagged_factor': 66, 'cause_distribution': {'glare': 45, 'blur': 22, 'dark': 21, 'reposition': 20, 'uneven': 20, 'small': 7}}

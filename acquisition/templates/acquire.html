@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hallmark Reader: Image Acquisition and Recognition</title>
+<style>
+:root{--bg:#f4f1ea;--ink:#1d1b16;--mut:#6b665b;--card:#fffdf8;--line:#ddd6c6;--acc:#8a5f00;--accbg:#8a5f00;--ok:#1f7a3d;--bad:#b3261e;--warn:#8a4b00;--dark:#14130f}
+@media (prefers-color-scheme:dark){:root{--bg:#16150f;--ink:#efeadb;--mut:#a39d8c;--card:#201e16;--line:#3a362a;--acc:#e0b04a;--accbg:#a67300;--ok:#5fcf86;--bad:#ff8a80;--warn:#f0b35a}}
+[hidden]{display:none!important}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,Segoe UI,Roboto,sans-serif}
+header{padding:14px 20px;border-bottom:1px solid var(--line)}h1{font-size:18px;margin:0}
+.banner{margin-top:6px;font-size:12.5px;color:var(--warn);font-weight:600;max-width:1200px}
+main{display:grid;grid-template-columns:minmax(380px,520px) 1fr;gap:18px;padding:18px 20px;max-width:1280px;margin:auto}
+@media(max-width:960px){main{grid-template-columns:1fr}}
+.col{display:flex;flex-direction:column;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin:0 0 10px}
+.tabs{display:flex;gap:6px;margin-bottom:12px}.tab{flex:1;padding:8px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;cursor:pointer;font-weight:600}
+.tab[aria-selected=true]{background:var(--accbg);color:#fff;border-color:var(--accbg)}
+label{font-size:12.5px;color:var(--mut);display:block;margin:8px 0 3px}
+select,input[type=file]{width:100%;padding:7px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+button.go{padding:9px 14px;border-radius:9px;border:1px solid var(--accbg);background:var(--accbg);color:#fff;font-weight:600;cursor:pointer}
+button.go.sec{background:transparent;color:var(--acc);border-color:var(--acc)}button.go:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.viewer{position:relative;background:#000;border-radius:10px;min-height:220px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--line)}
+.viewer img{display:block;width:100%;height:auto}.viewer .ph{color:#b5ae9b;font-size:13px;padding:20px;text-align:center}
+.chip{display:inline-block;font-size:12px;border-radius:999px;padding:2px 10px;border:1px solid var(--line);color:var(--mut)}
+.chip.ok{color:var(--ok);border-color:var(--ok)}.chip.bad{color:var(--bad);border-color:var(--bad)}
+.msg{font-size:13px;margin-top:8px;min-height:18px}.msg.err{color:var(--bad);font-weight:600}.msg.warn{color:var(--warn)}.msg.ok{color:var(--ok)}
+.pill{display:inline-block;padding:4px 14px;border-radius:999px;font-weight:700;font-size:15px}.pill.accept{background:#1f7a3d22;color:var(--ok)}.pill.recapture,.pill.no_mark{background:#b3261e22;color:var(--bad)}
+.big{font:700 26px ui-monospace,Menlo,Consolas,monospace;letter-spacing:.04em;word-break:break-all}
+.meter{height:14px;border-radius:7px;background:var(--line);position:relative;margin:10px 0}.meter>i{display:block;height:100%;border-radius:7px;background:var(--accbg)}.meter>b{position:absolute;top:-4px;width:2px;height:22px;background:var(--ink)}
+table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:3px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--mut);font-weight:600}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace}.note{font-size:12px;color:var(--mut)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}@media(max-width:700px){.grid3{grid-template-columns:1fr}}
+.grid3 img{width:100%;border-radius:8px;border:1px solid var(--line);background:#000}.grid3 figcaption{font-size:11.5px;color:var(--mut)}figure{margin:0}
+.oled{image-rendering:pixelated}
+details{font-size:13px;color:var(--mut);margin-top:10px}summary{cursor:pointer;color:var(--acc);font-weight:600}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--accbg);border-radius:50%;animation:s 0.8s linear infinite;vertical-align:-2px;margin-right:6px}@keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Hallmark Reader: Image Acquisition and Recognition (companion application)</h1>
+  <div class="banner">This application reads the visible characters of a hallmark inscription and estimates how reliable the reading is. It does NOT verify gold purity, authenticity or BIS certification. The laptop webcam is a software demonstration of the acquisition workflow; no wrist-worn device was built.</div>
+</header>
+<main>
+<div class="col">
+  <section class="card" aria-labelledby="h-acq">
+    <h2 id="h-acq">1. Acquire an image</h2>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-cam" aria-selected="true">Webcam (OpenCV)</button>
+      <button class="tab" role="tab" id="tab-up" aria-selected="false">Upload image</button>
+      <button class="tab" role="tab" id="tab-wr" aria-selected="false">Wearable camera</button>
+    </div>
+    <div id="pane-cam">
+      <label for="camSel">Camera</label>
+      <select id="camSel"><option value="">Scanning...</option></select>
+      <div class="row">
+        <button class="go sec" id="btnScan">Rescan</button>
+        <button class="go" id="btnStart">Start preview</button>
+        <button class="go sec" id="btnStop" disabled>Stop</button>
+        <span class="chip" id="camChip">closed</span>
+      </div>
+      <div class="viewer" style="margin-top:10px"><img id="live" alt="Live camera preview" hidden><div class="ph" id="livePh">No preview. Choose a camera and press Start preview.</div></div>
+      <div class="row"><button class="go" id="btnCapture" disabled>Capture frame</button></div>
+      <div class="msg" id="camMsg"></div>
+      <details><summary>Why a laptop webcam is usually not enough</summary>
+        <p>Hallmark characters are only about 1 to 3 mm high. A typical laptop webcam is fixed-focus at roughly 40 cm or more, so a hallmark held at that distance covers only a few pixels per character and cannot be read reliably. Use the upload option with a close-up/macro photograph, or a USB macro camera / USB microscope. The proposed wearable uses an OV2640 macro-optics camera on an ESP32-S3 board (not built here); see the paper.</p></details>
+    </div>
+    <div id="pane-up" hidden>
+      <label for="file">Close-up photograph of a hallmark (PNG, JPEG, BMP, WebP, TIFF; up to 16 MB)</label>
+      <input type="file" id="file" accept=".png,.jpg,.jpeg,.bmp,.webp,.tif,.tiff,image/*">
+      <div class="msg" id="upMsg"></div>
+      <p class="note">An uploaded image goes through exactly the same validation and recognition pipeline as a webcam capture.</p>
+    </div>
+    <div id="pane-wr" hidden>
+      <p class="note"><b>PROPOSED, UNTESTED.</b> The wrist unit (XIAO ESP32S3 Sense) would POST a JPEG to <span class="mono">http://&lt;this laptop&gt;:5060/api/wearable/upload</span> and show the 3-line reply on its OLED. No physical wrist unit was built or tested; the endpoint was exercised only with a Python client. Start this app with <span class="mono">--host 0.0.0.0</span> so the board can reach it. The result of the latest wearable capture appears on the right.</p>
+      <div class="msg" id="wrMsg">Waiting for a capture from the wrist unit...</div>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="h-cap">
+    <h2 id="h-cap">2. Captured image</h2>
+    <div class="viewer"><img id="cap" alt="Captured image preview" hidden><div class="ph" id="capPh">Nothing captured yet.</div></div>
+    <div class="msg" id="capMsg"></div>
+    <div id="capWarn" class="msg warn"></div>
+    <div class="row">
+      <button class="go sec" id="btnRetake" disabled>Retake</button>
+      <button class="go" id="btnProcess" disabled>Process image</button>
+    </div>
+    <label for="risk">Accepted-error target (risk-controlled threshold)</label>
+    <select id="risk">{% for r in risk_targets %}<option value="{{ r }}" {{ 'selected' if r == '0.05' else '' }}>{{ r }}</option>{% endfor %}</select>
+  </section>
+</div>
+
+<div class="col">
+  <section class="card" aria-labelledby="h-res" aria-live="polite">
+    <h2 id="h-res">3. Processing and result</h2>
+    <div id="status" class="msg">Waiting for an image.</div>
+    <div id="result" hidden>
+      <div class="row" style="margin-top:0"><span class="pill" id="decision"></span><span class="chip" id="readChip"></span></div>
+      <p style="margin:12px 0 2px" class="note">Transcription</p>
+      <div class="big" id="text"></div>
+      <p style="margin:14px 0 2px" class="note">Calibrated probability the transcription is correct (p) vs acceptance threshold (tau)</p>
+      <div class="meter"><i id="pbar"></i><b id="taumark"></b></div>
+      <div class="note" id="pnum"></div>
+      <p style="margin:14px 0 2px" class="note">Recapture guidance</p>
+      <div id="guide"></div>
+      <div class="grid3" style="margin-top:14px">
+        <figure><img id="imgFrame" alt="Input with detected region"><figcaption>Input frame with detected hallmark region (green = accepted, red = rejected)</figcaption></figure>
+        <figure><img id="imgRoi" alt="Extracted region of interest"><figcaption>Extracted ROI passed to OCR</figcaption></figure>
+        <figure><img id="imgOled" class="oled" alt="Emulated OLED"><figcaption>Emulated render of the wrist-unit OLED (not a photograph of hardware)</figcaption></figure>
+      </div>
+      <table style="margin-top:14px"><thead><tr><th>OCR engine</th><th>Input</th><th>Text</th><th>Confidence</th></tr></thead><tbody id="engines"></tbody></table>
+      <table style="margin-top:14px"><thead><tr><th>Stage</th><th>ms</th></tr></thead><tbody id="timings"></tbody></table>
+      <p class="note" id="inputInfo" style="margin-top:12px"></p>
+    </div>
+  </section>
+</div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+let captureId = null, activeTab = 'cam', streaming = false, poll = null;
+const LABEL = {accept: 'ACCEPTED: READ OK', recapture: 'RETAKE IMAGE', no_mark: 'NO MARK FOUND'};
+function msg(el, text, cls){ el.textContent = text || ''; el.className = 'msg ' + (cls || ''); }
+async function api(path, opt){ const r = await fetch(path, opt); let j = {}; try{ j = await r.json(); }catch(e){} if(!r.ok) throw Object.assign(new Error(j.error || r.statusText), {data: j}); return j; }
+
+function tab(which){
+  activeTab = which;
+  $('tab-cam').setAttribute('aria-selected', which === 'cam'); $('tab-up').setAttribute('aria-selected', which === 'up'); $('tab-wr').setAttribute('aria-selected', which === 'wr');
+  $('pane-cam').hidden = which !== 'cam'; $('pane-up').hidden = which !== 'up'; $('pane-wr').hidden = which !== 'wr';
+  clearInterval(wrPoll); if(which === 'wr') wrPoll = setInterval(checkWearable, 2000);
+}
+let wrPoll = null, wrSeq = 0;
+async function checkWearable(){
+  try{
+    const j = await api('/api/wearable/latest');
+    if(j.seq && j.seq !== wrSeq){
+      wrSeq = j.seq; captureId = j.capture_id; $('cap').src = j.preview; $('cap').hidden = false; $('capPh').hidden = true;
+      msg($('capMsg'), 'Received from the wearable camera: ' + j.capture_id, 'ok'); $('btnProcess').disabled = false; $('btnRetake').disabled = false;
+      msg($('wrMsg'), 'Capture ' + j.seq + ' received and processed by the same pipeline.', 'ok'); showResult(j.result, j.result.total_wall_ms / 1000);
+    }
+  }catch(e){}
+}
+$('tab-cam').onclick = () => tab('cam'); $('tab-up').onclick = () => tab('up'); $('tab-wr').onclick = () => tab('wr');
+
+async function scan(){
+  $('camSel').innerHTML = '<option value="">Scanning...</option>';
+  try{
+    const j = await api('/api/cameras');
+    $('camSel').innerHTML = j.cameras.length ? j.cameras.map(c => `<option value='${JSON.stringify(c.source)}'>${c.label}${c.width ? ` (${c.width}x${c.height})` : ''}</option>`).join('') : '<option value="">No camera found</option>';
+    msg($('camMsg'), j.note, j.cameras.length ? '' : 'warn');
+    $('btnStart').disabled = !j.cameras.length;
+  }catch(e){ msg($('camMsg'), 'Camera scan failed: ' + e.message, 'err'); }
+}
+function setStream(on, state){
+  streaming = on;
+  $('live').hidden = !on; $('livePh').hidden = on;
+  if(on){ $('live').src = '/api/camera/stream?t=' + Date.now(); } else { $('live').removeAttribute('src'); }
+  $('btnCapture').disabled = !on; $('btnStop').disabled = !on; $('btnStart').disabled = on;
+  const chip = $('camChip'); chip.textContent = state || (on ? 'streaming' : 'closed'); chip.className = 'chip ' + (on ? 'ok' : (state === 'disconnected' || state === 'error' ? 'bad' : ''));
+  clearInterval(poll); if(on) poll = setInterval(checkCam, 1500);
+}
+async function checkCam(){
+  try{
+    const s = (await api('/api/camera/status')).camera;
+    if(s.state !== 'streaming'){ setStream(false, s.state); msg($('camMsg'), s.message, 'err'); }
+  }catch(e){}
+}
+$('btnScan').onclick = scan;
+$('btnStart').onclick = async () => {
+  const v = $('camSel').value; if(v === '') return;
+  msg($('camMsg'), 'Opening camera...');
+  try{ await api('/api/camera/open', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({source: JSON.parse(v)})}); msg($('camMsg'), 'Live preview running.', 'ok'); setStream(true); }
+  catch(e){ setStream(false, 'error'); msg($('camMsg'), e.message, 'err'); $('btnStart').disabled = false; }
+};
+$('btnStop').onclick = async () => { try{ await api('/api/camera/close', {method: 'POST'}); }catch(e){} setStream(false); msg($('camMsg'), 'Camera closed.'); };
+$('btnCapture').onclick = async () => {
+  try{ const j = await api('/api/camera/capture', {method: 'POST'}); showCapture(j); }
+  catch(e){ msg($('camMsg'), e.message, 'err'); const s = e.data && e.data.camera; if(s && s.state !== 'streaming') setStream(false, s.state); }
+};
+$('file').onchange = async () => {
+  const f = $('file').files[0]; if(!f) return;
+  const fd = new FormData(); fd.append('image', f); msg($('upMsg'), 'Uploading...');
+  try{ const j = await api('/api/upload', {method: 'POST', body: fd}); msg($('upMsg'), ''); showCapture(j); }
+  catch(e){ msg($('upMsg'), e.message, 'err'); }
+};
+function showCapture(j){
+  captureId = j.capture_id; $('cap').src = j.preview; $('cap').hidden = false; $('capPh').hidden = true;
+  msg($('capMsg'), j.message, 'ok');
+  $('capWarn').textContent = (j.validation.warnings || []).join(' | ');
+  $('btnProcess').disabled = !j.validation.ok; $('btnRetake').disabled = false;
+  if(!j.validation.ok) msg($('capMsg'), 'Image rejected by validation: ' + j.validation.errors.join('; '), 'err');
+  $('result').hidden = true; msg($('status'), 'Image ready. Press "Process image".');
+  if(streaming) $('live').style.opacity = '.55';
+}
+$('btnRetake').onclick = () => {
+  captureId = null; $('cap').hidden = true; $('cap').removeAttribute('src'); $('capPh').hidden = false; msg($('capMsg'), ''); $('capWarn').textContent = '';
+  $('btnProcess').disabled = true; $('btnRetake').disabled = true; $('result').hidden = true; $('file').value = '';
+  $('live').style.opacity = '1'; msg($('status'), 'Waiting for an image.');
+};
+$('btnProcess').onclick = async () => {
+  if(!captureId) return; $('btnProcess').disabled = true; $('result').hidden = true;
+  const t0 = Date.now();
+  $('status').className = 'msg'; $('status').innerHTML = '<span class="spin"></span>Processing: validating, localising, running both OCR engines, scoring...';
+  try{
+    const {job} = await api('/api/process', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({capture_id: captureId, risk: $('risk').value})});
+    for(;;){
+      await new Promise(r => setTimeout(r, 400));
+      const j = await api('/api/job/' + job);
+      if(j.state === 'running'){ $('status').innerHTML = `<span class="spin"></span>${j.stage} (${((Date.now() - t0)/1000).toFixed(1)} s)`; continue; }
+      if(j.state === 'error') throw new Error(j.error);
+      showResult(j.result, (Date.now() - t0) / 1000); break;
+    }
+  }catch(e){ msg($('status'), 'Processing failed: ' + e.message, 'err'); }
+  $('btnProcess').disabled = false;
+};
+function showResult(r, secs){
+  msg($('status'), `Done in ${secs.toFixed(1)} s.`, 'ok');
+  $('result').hidden = false;
+  const d = $('decision'); d.textContent = LABEL[r.decision]; d.className = 'pill ' + r.decision;
+  $('readChip').textContent = 'readability: ' + r.readability;
+  $('text').textContent = r.text || '(no text)';
+  const p = r.p_correct, tau = r.tau;
+  $('pbar').style.width = (p * 100).toFixed(1) + '%';
+  const tm = $('taumark'); tm.style.display = tau == null ? 'none' : 'block'; if(tau != null) tm.style.left = (tau * 100) + '%';
+  $('pnum').textContent = `p = ${p.toFixed(3)}   tau = ${tau == null ? 'not attainable at this risk target (always retake)' : tau.toFixed(3)}   risk target = ${r.risk_target}`;
+  $('guide').textContent = r.decision === 'accept' ? 'None needed: reading accepted at this risk target.' : r.guidance;
+  $('imgFrame').src = r.images.frame; $('imgRoi').src = r.images.roi; $('imgOled').src = r.images.oled;
+  const e = r.engines;
+  $('engines').innerHTML = [['primary', e.primary], ['secondary', e.secondary]].map(([k, x]) => `<tr><td>${k}: ${x.engine}</td><td>${x.variant}</td><td class="mono">${x.text || '(empty)'}</td><td>${Number(x.conf).toFixed(3)}</td></tr>`).join('');
+  $('timings').innerHTML = Object.entries(r.timings_ms).map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('') + `<tr><th>total (wall)</th><th>${r.total_wall_ms}</th></tr>`;
+  const i = r.input; $('inputInfo').textContent = `Input: ${i.file} (${i.width}x${i.height}, processed at ${i.processed_width}x${i.processed_height}); sha256 ${i.sha256.slice(0, 16)}...`;
+}
+scan();
+</script>
+</body>
+</html>

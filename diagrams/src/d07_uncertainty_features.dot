@@ -1,0 +1,7 @@
+digraph G {
+graph [fontname="Helvetica",rankdir=LR,pad=0.3,nodesep=0.35,ranksep=0.5]; node [fontname="Helvetica",shape=box,style="rounded,filled",fillcolor="#EEF3FA",color="#2F5D8C",fontsize=11]; edge [fontname="Helvetica",fontsize=9,color="#555555"];
+
+p [label="Primary OCR\ntext + conf"]; s [label="Secondary OCR\ntext + conf"]; f1 [label="p_conf, p_conf_min, s_conf"]; f2 [label="disagree = normalised\nedit distance(p, s)"]; f3 [label="lengths, #tokens, empty flag"]; q [label="21 quality features\n(sharpness, contrast, brightness,\nillumination, saturation, noise, ROI size)"]; X [label="Feature vector",shape=record,fillcolor="#FFF4D6"]; 
+p->f1; s->f1; p->f2; s->f2; p->f3; f1->X; f2->X; f3->X; q->X;
+gr [label="grammar validity\n(ablation S6 only)",fillcolor="#F3F3F3",color="#888888"]; p->gr [style=dashed]; gr->X [style=dashed];
+}

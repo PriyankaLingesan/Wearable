@@ -1,0 +1,7 @@
+digraph G {
+graph [fontname="Helvetica",rankdir=LR,pad=0.3,nodesep=0.35,ranksep=0.5]; node [fontname="Helvetica",shape=box,style="rounded,filled",fillcolor="#EEF3FA",color="#2F5D8C",fontsize=11]; edge [fontname="Helvetica",fontsize=9,color="#555555"];
+
+rankdir=TB; node [shape=box];
+a [label="1. Button A pressed"]; b [label="2. Camera frame (simulated)"]; c [label="3. Quality + localisation (~16 ms)"]; d [label="4. Two OCR engines (~110 ms)"]; e [label="5. Rejector score (~21 ms)"]; f [label="6. p >= tau(risk target)?",shape=diamond,fillcolor="#FFF4D6"]; g [label="7a. OLED: READ OK + text",fillcolor="#E4F4E4"]; h [label="7b. OLED: RETAKE + cause hint",fillcolor="#FDECEA"];
+a->b->c->d->e->f; f->g [label="yes"]; f->h [label="no"]; h->a [label="user retakes",style=dashed];
+}

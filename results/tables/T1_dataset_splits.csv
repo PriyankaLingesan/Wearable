@@ -1,0 +1,5 @@
+split,items,images,readable,partial,unreadable
+train,144,864,476,221,167
+val,48,288,158,68,62
+test,48,288,152,79,57
+total,240,1440,786,368,286

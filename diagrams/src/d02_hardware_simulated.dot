@@ -1,0 +1,8 @@
+digraph G {
+graph [fontname="Helvetica",rankdir=LR,pad=0.3,nodesep=0.35,ranksep=0.5]; node [fontname="Helvetica",shape=box,style="rounded,filled",fillcolor="#EEF3FA",color="#2F5D8C",fontsize=11]; edge [fontname="Helvetica",fontsize=9,color="#555555"];
+
+rankdir=TB;
+subgraph cluster_w { label="Wrist unit (reference design - NOT built; simulated in software)"; style=dashed; fontname="Helvetica";
+ cam [label="Camera module\n(simulated by synthetic renderer)"]; led [label="LED ring\n(simulated: halves illumination non-uniformity)"]; btn [label="Button A\n(simulated: UI button)"]; soc [label="Compute\n(sandbox CPU here;\nPi Zero 2 W-class is a design target)"]; oled [label="128x64 1-bit OLED\n(simulated frame, real bitmap)"]; bat [label="Battery / power\n(not modelled)",fillcolor="#F3F3F3",color="#888888"];
+ btn -> soc; cam -> soc; soc -> led; soc -> oled; bat -> soc [style=dashed]; }
+}

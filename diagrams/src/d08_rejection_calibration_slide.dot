@@ -1,0 +1,6 @@
+digraph G {
+graph [fontname="Helvetica",rankdir=TB,pad=0.3,nodesep=0.35,ranksep=0.5]; node [fontname="Helvetica",shape=box,style="rounded,filled",fillcolor="#EEF3FA",color="#2F5D8C",fontsize=16]; edge [fontname="Helvetica",fontsize=13,color="#555555"];
+
+X [label="Feature vector"]; m [label="Base model\n(dev-selected by GroupKFold AURC)"]; oof [label="Out-of-fold scores\n(GroupKFold by item)"]; iso [label="Isotonic calibration\nfit on OOF scores"]; p [label="P(correct)"]; t1 [label="tau (empirical)\nlargest coverage with\ndev risk <= target"]; t2 [label="tau (UCB)\nClopper-Pearson upper bound\n<= target (delta 0.1)"]; dec [label="accept if p >= tau",shape=diamond,fillcolor="#FFF4D6"]; 
+X->m->oof->iso->p; p->t1; p->t2; t2->dec [label="simulator default"]; t1->dec [style=dashed]; note [shape=note,label="tau chosen on dev only;\ntest set untouched",fillcolor="#FDECEA",color="#C62828"];
+}

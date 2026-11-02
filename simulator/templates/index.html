@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wrist Hallmark Reader - Simulator</title>
+<style>
+:root{--bg:#f4f1ea;--ink:#1d1b16;--mut:#6b665b;--card:#fffdf8;--line:#ddd6c6;--acc:#9a6b00;--ok:#1f7a3d;--bad:#b3261e;--warn:#a15c00;--dev:#1b1d21}
+@media (prefers-color-scheme:dark){:root{--bg:#16150f;--ink:#efeadb;--mut:#a39d8c;--card:#201e16;--line:#3a362a;--acc:#e0b04a;--ok:#5fcf86;--bad:#ff8a80;--warn:#f0b35a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,Segoe UI,Roboto,sans-serif}
+header{padding:14px 20px;border-bottom:1px solid var(--line)}h1{font-size:18px;margin:0}
+.banner{margin-top:6px;font-size:12.5px;color:var(--warn);font-weight:600}
+main{display:grid;grid-template-columns:340px 1fr;gap:18px;padding:18px 20px;max-width:1280px;margin:auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin:0 0 10px}
+.sim{display:inline-block;font-size:10.5px;border:1px dashed var(--warn);color:var(--warn);border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:middle}
+/* device */
+.watch{width:300px;margin:6px auto 0;position:relative}
+.strap{height:46px;background:#2b2a27;border-radius:10px 10px 0 0;margin:0 46px}.strap.b{border-radius:0 0 10px 10px}
+.case{background:var(--dev);border-radius:26px;padding:18px 16px 16px;border:3px solid #3b3d42;position:relative;box-shadow:0 6px 18px #0004}
+.oled{background:#000;border-radius:8px;padding:6px;border:2px solid #2a2c30}.oled img{display:block;width:100%;image-rendering:pixelated;filter:sepia(1) saturate(4) hue-rotate(-12deg) brightness(1.05);background:#000;min-height:150px}
+.leds{position:absolute;top:6px;left:50%;transform:translateX(-50%);display:flex;gap:6px}.led{width:9px;height:9px;border-radius:50%;background:#333}.led.on{background:#fff6c4;box-shadow:0 0 8px #ffe98a}
+.btn{position:absolute;right:-9px;width:10px;height:34px;border-radius:3px;background:#555;border:none;cursor:pointer}.btn.a{top:34%}.btn.bb{top:62%}
+.cam{position:absolute;left:-8px;top:42%;width:14px;height:14px;border-radius:50%;background:#0b0c0e;border:2px solid #666}
+.buzz{animation:buzz .07s linear infinite}@keyframes buzz{0%{transform:translate(1.5px,0)}50%{transform:translate(-1.5px,1px)}100%{transform:translate(1px,-1px)}}
+.hap{font-size:11px;color:var(--mut);text-align:center;margin-top:8px;min-height:16px}
+label{font-size:12.5px;color:var(--mut);display:block;margin:8px 0 3px}
+select,input[type=range],input[type=text]{width:100%}select,input[type=text]{padding:6px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+button.go{padding:9px 14px;border-radius:9px;border:1px solid var(--acc);background:var(--acc);color:#fff;font-weight:600;cursor:pointer}button.go.sec{background:transparent;color:var(--acc)}
+button.go:disabled{opacity:.5;cursor:wait}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+.imgbox img{width:100%;border-radius:8px;border:1px solid var(--line);background:#000}
+.pill{display:inline-block;padding:3px 12px;border-radius:999px;font-weight:700;font-size:14px}.pill.accept{background:#1f7a3d22;color:var(--ok)}.pill.recapture,.pill.no_mark{background:#b3261e22;color:var(--bad)}
+.bar{height:10px;border-radius:6px;background:var(--line);position:relative;overflow:hidden}.bar>i{display:block;height:100%;background:var(--acc)}
+.meter{height:14px;border-radius:7px;background:var(--line);position:relative;margin:8px 0}.meter>i{display:block;height:100%;border-radius:7px;background:var(--acc)}.meter>b{position:absolute;top:-4px;width:2px;height:22px;background:var(--ink)}
+table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:3px 6px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--mut);font-weight:600}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace}.big{font-size:22px;font-weight:700;letter-spacing:.04em}
+.note{font-size:12px;color:var(--mut)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Wrist-Worn Hallmark Reader - Interactive Simulator</h1>
+  <div class="banner">SOFTWARE SIMULATION. No physical wearable exists. Camera, LED, buttons and OLED are simulated; the vision pipeline is real. Reads visible inscriptions only - it does NOT assess authenticity, purity or composition.</div>
+</header>
+<main>
+  <section class="card">
+    <h2>Device <span class="sim">SIMULATED HARDWARE</span></h2>
+    <div class="watch" id="watch">
+      <div class="strap"></div>
+      <div class="case">
+        <div class="leds" title="Simulated LED ring"><span class="led on" id="led1"></span><span class="led on" id="led2"></span><span class="led on" id="led3"></span></div>
+        <div class="cam" title="Simulated macro camera"></div>
+        <button class="btn a" id="btnA" title="Button A: capture (simulated)"></button>
+        <button class="btn bb" id="btnB" title="Button B: cycle risk target (simulated)"></button>
+        <div class="oled"><img id="oled" alt="OLED 128x64" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="></div>
+      </div>
+      <div class="strap b"></div>
+    </div>
+    <div class="note" style="margin-top:8px">Button A = capture. Button B = cycle accepted-error target. The OLED image is the actual 128x64 1-bit frame produced by the renderer, shown 5x.</div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:14px">
+    <div class="card">
+      <h2>Capture <span class="sim">SIMULATED CAMERA</span></h2>
+      <div class="grid2">
+        <div>
+          <label>Acquisition condition (synthetic generator)</label>
+          <select id="cond">{% for c in conds %}<option value="{{c}}">{{c}}</option>{% endfor %}</select>
+          <label>Severity <span id="sevv" class="mono">0.5</span></label>
+          <input type="range" id="sev" min="0" max="1" step="0.05" value="0.5">
+          <label>Optional inscription (blank = random)</label>
+          <input type="text" id="txt" maxlength="16" placeholder="e.g. 916 22K">
+        </div>
+        <div>
+          <label>Accepted-error target (rejector operating point)</label>
+          <select id="risk">{% for r in risk_targets %}<option value="{{r}}" {% if r=='0.05' %}selected{% endif %}>{{(r|float*100)|round|int}}% accepted-error target</option>{% endfor %}</select>
+          <label><input type="checkbox" id="led" checked> LED ring on (simulated effect on lighting)</label>
+          <label>Or upload your own close-up photo</label>
+          <input type="file" id="file" accept="image/*">
+        </div>
+      </div>
+      <div class="row"><button class="go" id="go">Capture (A)</button><button class="go sec" id="reroll">New random item</button><span id="status" class="note"></span></div>
+    </div>
+
+    <div class="card" id="result" style="display:none">
+      <h2>Result</h2>
+      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+        <span class="pill" id="dec"></span><span class="big mono" id="txtout"></span>
+      </div>
+      <div class="note" id="guide" style="margin-top:6px;font-size:14px;color:var(--ink)"></div>
+      <div class="grid2" style="margin-top:12px">
+        <div><div class="note">P(transcription correct) - calibrated rejector <span id="pv" class="mono"></span></div>
+          <div class="meter"><i id="pbar"></i><b id="tau"></b></div><div class="note" id="taunote"></div>
+          <div class="note" style="margin-top:10px">Readability (quality-only classifier)</div><div id="rdbars"></div></div>
+        <div><table id="ocrtab"></table><table id="qtab" style="margin-top:10px"></table></div>
+      </div>
+      <div class="grid2" style="margin-top:12px">
+        <div class="imgbox"><div class="note">Input frame + localised box</div><img id="imFrame"></div>
+        <div class="imgbox"><div class="note">ROI passed to the OCR engines</div><img id="imRoi" style="background:#eee"></div>
+      </div>
+      <div style="margin-top:12px"><table id="timetab"></table></div>
+      <div class="note" id="gt" style="margin-top:8px"></div>
+    </div>
+  </section>
+</main>
+<script>
+const $=id=>document.getElementById(id);let busy=false;
+$('sev').oninput=()=>$('sevv').textContent=$('sev').value;
+function setLed(on){['led1','led2','led3'].forEach(i=>$(i).classList.toggle('on',on))}
+$('led').onchange=()=>setLed($('led').checked);
+function fill(r){
+  $('result').style.display='block';$('oled').src=r.images.oled;
+  const d=$('dec');d.textContent={accept:'ACCEPTED',recapture:'RECAPTURE',no_mark:'NO MARK FOUND'}[r.decision];d.className='pill '+r.decision;
+  $('txtout').textContent=r.text||'-';$('guide').textContent=r.decision==='accept'?'Transcription accepted at the chosen accepted-error target. This is a reading of visible characters only.':r.guidance;
+  $('pv').textContent=r.p_correct.toFixed(3);$('pbar').style.width=(100*r.p_correct)+'%';
+  if(r.tau!==null){$('tau').style.left=(100*r.tau)+'%';$('tau').style.display='block';$('taunote').textContent='threshold '+r.tau.toFixed(3)+' ('+Math.round(r.risk_target*100)+'% accepted-error target, set on development data)'}
+  else{$('tau').style.display='none';$('taunote').textContent='no operating point met this target on development data: everything is sent for recapture'}
+  $('rdbars').innerHTML=Object.entries(r.readability_probs).map(([k,v])=>`<div style="display:flex;gap:8px;align-items:center;font-size:12.5px"><span style="width:84px">${k}</span><div class="bar" style="flex:1"><i style="width:${100*v}%"></i></div><span class="mono">${v.toFixed(2)}</span></div>`).join('')||'<span class="note">'+r.readability+'</span>';
+  const e=r.engines;$('ocrtab').innerHTML=`<tr><th>Engine</th><th>Text</th><th>Conf*</th></tr><tr><td>${e.primary.engine} (${e.primary.variant})</td><td class="mono">${e.primary.text||'-'}</td><td>${e.primary.conf.toFixed(2)}</td></tr><tr><td>${e.secondary.engine} (${e.secondary.variant})</td><td class="mono">${e.secondary.text||'-'}</td><td>${e.secondary.conf.toFixed(2)}</td></tr><tr><td colspan="3" class="note">*raw engine confidence, NOT a probability. disagreement=${r.disagreement.toFixed(2)}, grammar-valid=${r.grammar_valid}</td></tr>`;
+  const q=r.quality;$('qtab').innerHTML='<tr><th>Quality measure</th><th>Value</th></tr>'+Object.entries(q).map(([k,v])=>`<tr><td>${k}</td><td class="mono">${v.toFixed(3)}</td></tr>`).join('');
+  $('imFrame').src=r.images.frame;$('imRoi').src=r.images.roi;
+  $('timetab').innerHTML='<tr><th>Stage</th><th>ms</th></tr>'+Object.entries(r.timings_ms).map(([k,v])=>`<tr><td>${k}</td><td class="mono">${v}</td></tr>`).join('')+`<tr><td><b>total (this host, not a Pi)</b></td><td class="mono"><b>${r.total_ms}</b></td></tr>`;
+  $('gt').textContent=r.simulated_ground_truth?('SYNTHETIC demo ground truth: "'+r.simulated_ground_truth.text+'", style '+r.simulated_ground_truth.style+', generator readability proxy: '+r.simulated_ground_truth.readability_proxy):'Uploaded image: no ground truth available.';
+}
+async function run(seedNew){
+  if(busy)return;busy=true;$('go').disabled=true;$('status').textContent='running real pipeline...';
+  try{
+    const f=$('file').files[0];let r;
+    if(f){const fd=new FormData();fd.append('image',f);fd.append('risk',$('risk').value);r=await (await fetch('/api/analyze',{method:'POST',body:fd})).json()}
+    else{window._seed=seedNew||window._seed||Math.floor(Math.random()*1e9);
+      r=await (await fetch('/api/capture',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({condition:$('cond').value,severity:parseFloat($('sev').value),led:$('led').checked,risk:$('risk').value,seed:window._seed,text:$('txt').value||null})})).json()}
+    if(r.error){$('status').textContent='error: '+r.error}else{fill(r);$('status').textContent='done in '+r.total_ms+' ms'}
+  }catch(e){$('status').textContent='request failed: '+e}
+  busy=false;$('go').disabled=false}
+$('go').onclick=()=>run();$('btnA').onclick=()=>run();
+$('reroll').onclick=()=>{$('file').value='';run(Math.floor(Math.random()*1e9))};
+$('btnB').onclick=()=>{const s=$('risk');s.selectedIndex=(s.selectedIndex+1)%s.options.length;$('status').textContent='risk target -> '+s.value}
+</script>
+</body>
+</html>

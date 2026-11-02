@@ -1,0 +1,6 @@
+digraph G {
+graph [fontname="Helvetica",rankdir=LR,pad=0.3,nodesep=0.35,ranksep=0.5]; node [fontname="Helvetica",shape=box,style="rounded,filled",fillcolor="#EEF3FA",color="#2F5D8C",fontsize=11]; edge [fontname="Helvetica",fontsize=9,color="#555555"];
+
+cfg [label="configs/default.json\nseed 20261030"]; spec [label="Item specs\n240 fictitious inscriptions\n(3 sources x 80 items)"]; split [label="Item-level split\n60/20/20 train/val/test\n(asserted: no item in 2 splits)"]; ren [label="Procedural renderer\nengraved/embossed/stamped/laser\n+ brushed-metal texture"]; deg [label="Degradations\nblur, low-res, glare, uneven light,\nlow contrast, angle, occlusion, noise+JPEG"]; img [label="1440 SYNTHETIC PNGs\n6 acquisitions per item"]; man [label="manifest.csv\nGT text, params, per-factor labels,\nreadability proxy, provenance=synthetic"];
+cfg->spec->split; spec->ren->deg->img->man; split->man;
+}

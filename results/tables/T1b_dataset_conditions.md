@@ -1,0 +1,13 @@
+| condition    |   partial |   readable |   unreadable |
+|:-------------|----------:|-----------:|-------------:|
+| angle        |        23 |         66 |            1 |
+| blur         |        19 |         67 |            5 |
+| clean        |         0 |        240 |            0 |
+| combined     |        77 |         69 |           53 |
+| glare        |        43 |         41 |           22 |
+| lowcontrast  |        40 |         64 |            0 |
+| lowres       |         8 |         91 |            2 |
+| noise        |        57 |         42 |            0 |
+| occlusion    |        24 |          0 |           70 |
+| severe       |        77 |          8 |          133 |
+| uneven_light |         0 |         98 |            0 |

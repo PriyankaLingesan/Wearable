@@ -1,0 +1,54 @@
+{
+ "n_images": 60,
+ "wall_s": 16.397332084000027,
+ "cpu_s": 9.721285044999998,
+ "cpu_utilisation": 0.5928577280255064,
+ "single_engine": {
+  "tesseract": {
+   "median_ms": 125.15152800006035,
+   "p95_ms": 160.07048810001834
+  },
+  "rapidocr": {
+   "median_ms": 27.814741999918624,
+   "p95_ms": 34.39028749980935
+  }
+ },
+ "memory": {
+  "tesseract_only": {
+   "mode": "tesseract_only",
+   "rss_after_mb": 123.219968,
+   "peak_mb": 117.51171875,
+   "rss_import_mb": 65.048576
+  },
+  "rapidocr_only": {
+   "mode": "rapidocr_only",
+   "rss_after_mb": 181.63712,
+   "peak_mb": 173.22265625,
+   "rss_import_mb": 65.101824
+  },
+  "full_dual": {
+   "mode": "full_dual",
+   "rss_after_mb": 184.815616,
+   "peak_mb": 176.25390625,
+   "rss_import_mb": 65.011712
+  }
+ },
+ "sizes_mb": {
+  "rapidocr:ch_PP-OCRv3_rec_infer.onnx": 10.690752,
+  "rapidocr:ch_PP-OCRv3_det_infer.onnx": 2.43288,
+  "rapidocr:ch_ppocr_mobile_v2.0_cls_infer.onnx": 0.585532,
+  "tesseract:eng.traineddata": 4.113088,
+  "ours:readability.joblib": 1.349976,
+  "ours:guidance.joblib": 0.000296,
+  "ours:rejector.joblib": 1.68311
+ },
+ "platform": {
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "logical_cpus": 2,
+  "ram_gb": 8.417533952,
+  "python": "3.13.18",
+  "opencv": "5.0.0",
+  "os": "Linux-6.18.44-fc-v185-x86_64-with-glibc2.39"
+ },
+ "note": "Measured on the sandbox CPU; NOT a Raspberry Pi. No extrapolation to Pi hardware is made."
+}

@@ -1,0 +1,6 @@
+digraph G {
+graph [fontname="Helvetica",rankdir=TB,pad=0.3,nodesep=0.35,ranksep=0.5]; node [fontname="Helvetica",shape=box,style="rounded,filled",fillcolor="#EEF3FA",color="#2F5D8C",fontsize=16]; edge [fontname="Helvetica",fontsize=13,color="#555555"];
+
+g [label="Gray frame"]; e1 [label="Horizontal gradient\nenergy (anisotropic)"]; e2 [label="Threshold + word-gap\nblob merging"]; box [label="Text box\n(fallback: central box)"]; pad [label="Pad ROI (10%)"]; v1 [label="raw gray\n(primary OCR)",fillcolor="#E4F4E4"]; v2 [label="red channel\n(secondary OCR)",fillcolor="#E4F4E4"]; v3 [label="enh / bin variants\n(rectify, glare inpaint, flatten,\nNLM, CLAHE, sharpen, Sauvola)\nablation only - hurt OCR",fillcolor="#F3F3F3",color="#888888"];
+g->e1->e2->box->pad; pad->v1; pad->v2; pad->v3;
+}

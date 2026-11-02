@@ -1,0 +1,29 @@
+{
+  "seed": 20261030,
+  "dataset": {
+    "items_per_source": 80,
+    "acquisitions_per_item": 6,
+    "image_size": [640, 400],
+    "split_ratios": {"train": 0.6, "val": 0.2, "test": 0.2},
+    "sources": ["S1", "S2", "S3"]
+  },
+  "pipeline": {
+    "max_frame_side": 640,
+    "roi_pad_frac": 0.10,
+    "target_text_height_px": 48,
+    "max_upscale": 4.0,
+    "clahe_clip": 2.0,
+    "clahe_tiles": 4,
+    "glare_sat_threshold": 245,
+    "sharpen_lapvar_below": 120.0
+  },
+  "ocr": {
+    "tesseract_whitelist": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+    "tesseract_psm": 7
+  },
+  "rejection": {
+    "target_risks": [0.01, 0.02, 0.05, 0.10],
+    "calibration": "isotonic",
+    "bootstrap_resamples": 1000
+  }
+}

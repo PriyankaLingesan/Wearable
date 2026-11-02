@@ -1,0 +1,11 @@
+item,value_mb
+peak RSS: tesseract_only,117.51171875
+peak RSS: rapidocr_only,173.22265625
+peak RSS: full_dual,176.25390625
+size: rapidocr:ch_PP-OCRv3_rec_infer.onnx,10.690752
+size: rapidocr:ch_PP-OCRv3_det_infer.onnx,2.43288
+size: rapidocr:ch_ppocr_mobile_v2.0_cls_infer.onnx,0.585532
+size: tesseract:eng.traineddata,4.113088
+size: ours:readability.joblib,1.349976
+size: ours:guidance.joblib,0.000296
+size: ours:rejector.joblib,1.68311

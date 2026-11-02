@@ -1,0 +1,3 @@
+|   n_rejected_with_flagged_factor |   top1_hit_rate |   random_cause_hit_rate |   n_rejected_total |   n_rejected_no_flagged_factor |
+|---------------------------------:|----------------:|------------------------:|-------------------:|-------------------------------:|
+|                              135 |           0.674 |                   0.185 |                201 |                             66 |
